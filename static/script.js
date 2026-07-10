@@ -13,14 +13,10 @@ const engineInput = document.getElementById("engine");
 const powerInput = document.getElementById("max_power");
 const seatsInput = document.getElementById("seats");
 
-// Loading animation while predicting
-
+// Loading animation
 const form = document.getElementById("predictionForm");
 const predictBtn = document.getElementById("predictBtn");
 const buttonText = document.getElementById("buttonText");
-
-const data = await response.json();
-latestPrediction = data;
 
 
 function highlightField(input) {
@@ -124,6 +120,8 @@ form.addEventListener("submit", async function (e) {
 
         const data = await response.json();
 
+        latestPrediction = data;
+
         // Price
         document.getElementById("modalPrice").textContent = data.prediction;
 
@@ -164,33 +162,34 @@ form.addEventListener("submit", async function (e) {
 });
 
 document
-.getElementById("downloadReport")
-.addEventListener("click", async () => {
+    .getElementById("downloadReport")
+    .addEventListener("click", async () => {
 
-    const response = await fetch("/download-report",{
+        console.log(latestPrediction);
+        const response = await fetch("/download-report", {
 
-        method:"POST",
+            method: "POST",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-        body:JSON.stringify(latestPrediction)
+            body: JSON.stringify(latestPrediction)
+
+        });
+
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        a.href = url;
+
+        a.download = "Used_Car_Valuation_Report.pdf";
+
+        a.click();
+
+        window.URL.revokeObjectURL(url);
 
     });
-
-    const blob = await response.blob();
-
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-
-    a.href = url;
-
-    a.download = "Used_Car_Valuation_Report.pdf";
-
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-
-});
